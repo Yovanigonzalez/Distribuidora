@@ -1,0 +1,71 @@
+body {
+    font-family: 'Montserrat', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #fff; 
+  }
+
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fff;
+    padding: 10px;
+  }
+
+  nav {
+    display: flex;
+    background-color: #fff;
+  }
+
+  nav a {
+    color: #333;
+    text-decoration: none;
+    padding: 10px 20px;
+    margin: 0 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+  }
+
+  nav a:hover {
+    background-color: #ddd;
+  }
+
+  .logo {
+    display: block;
+    max-width: 100px; /* ajusta el tamaño máximo de tu logo 172px */
+    margin-left: 100px;
+  }
+
+  .burger-icon {
+    display: none; /* Por defecto, ocultar el icono de hamburguesa en pantallas grandes */
+    cursor: pointer;
+  }
+
+  .burger-icon img {
+    width: 30px; /* Ajusta el tamaño del icono de hamburguesa */
+    height: auto;
+  }
+
+  /* Media queries para hacer el diseño responsivo */
+  @media only screen and (max-width: 600px) {
+    nav {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      position: absolute;
+      top: 60px; /* Ajusta según el espacio que quieras entre el encabezado y el menú */
+      left: 0;
+      right: 0;
+      background-color: #fff;
+      z-index: 1;
+    }
+
+    nav a {
+      margin: 5px;
+    }
+
+    .burger-icon {
+      display: block; /* Mostrar el icono de hamburguesa en pantallas pequeñas */
+    }
+  }
