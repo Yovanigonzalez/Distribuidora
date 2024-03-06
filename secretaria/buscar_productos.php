@@ -1,18 +1,19 @@
 <?php
 include '../config/conexion.php';
 
-if (isset($_GET['query'])) {
-    $query = $_GET['query'];
+if(isset($_POST['query'])){
+    $query = $_POST['query'];
 
-    $sql = "SELECT id, nombre FROM productos WHERE nombre LIKE '%$query%'";
-    $result = $conn->query($sql);
+    // Escapa caracteres especiales para evitar inyecciones SQL
+    $query = mysqli_real_escape_string($conexion, $query);
 
-    $productos = array();
+    // Realiza la consulta en la base de datos
+    $sql = "SELECT * FROM productos WHERE nombre LIKE '%$query%'";
+    $result = mysqli_query($conexion, $sql);
 
-    while ($row = $result->fetch_assoc()) {
-        $productos[] = $row;
+    // Muestra los resultados
+    while($row = mysqli_fetch_assoc($result)){
+        echo '<p>'.$row['nombre'].'</p>';
     }
-
-    echo json_encode($productos);
 }
 ?>

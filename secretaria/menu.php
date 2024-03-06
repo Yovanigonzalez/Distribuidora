@@ -18,7 +18,6 @@ include '../config/conexion.php';
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Menu</title>
     <!--Logo-->
   <link rel="shortcut icon" type="image/x-icon" href="../log/ico.png">
 
