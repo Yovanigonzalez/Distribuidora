@@ -131,25 +131,39 @@ if (isset($_SESSION['nombre_usuario'])) {
       <!-- Agregar Usuarios-->
 
         
-<li class="nav-item">
-        <a href="ventas.php" class="nav-link">
-            <i class="nav-icon fas fa-door-closed"></i>
-            <p>Ventas</p>
-        </a>
-        </li>
+      <li class="nav-item">
+    <a href="ventas.php" class="nav-link">
+        <i class="nav-icon fas fa-cash-register"></i> <!-- Cambiado a un icono relacionado con ventas -->
+        <p>Ventas</p>
+    </a>
+</li>
 
-        <li class="nav-item">
-        <a href="logout.php" class="nav-link">
-            <i class="nav-icon fas fa-door-closed"></i>
-            <p>Pedidos</p>
-        </a>
-        </li>
-        
-        <li class="nav-item">
-        <a href="logout.php" class="nav-link">
-            <i class="nav-icon fas fa-door-closed"></i>
-            <p>Cerrar sesión</p>
-        </a>
-        </li>
+<li class="nav-item">
+    <a href="pedidos.php" class="nav-link"> <!-- Cambiado a "pedidos.php" en lugar de "logout.php" -->
+        <i class="nav-icon fas fa-list-alt"></i> <!-- Cambiado a un icono relacionado con pedidos -->
+        <p>Pedidos</p>
+    </a>
+</li>
+
+<li class="nav-item">
+    <a href="cajas.php" class="nav-link">
+        <i class="nav-icon fas fa-cash-register"></i> <!-- Puedes ajustar este icono según lo que represente "Cajas" en tu contexto -->
+        <p>Cajas</p>
+    </a>
+</li>
+
+<li class="nav-item">
+    <a href="nota.php" class="nav-link">
+        <i class="nav-icon fas fa-file-alt"></i> <!-- Cambiado a un icono relacionado con notas o documentos -->
+        <p>Notas</p>
+    </a>
+</li>
+
+<li class="nav-item">
+    <a href="logout.php" class="nav-link">
+        <i class="nav-icon fas fa-sign-out-alt"></i> <!-- Cambiado a un icono de cerrar sesión -->
+        <p>Cerrar sesión</p>
+    </a>
+</li>
 
   </aside>
