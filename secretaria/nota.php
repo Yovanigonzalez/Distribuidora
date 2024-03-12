@@ -83,24 +83,51 @@ if (isset($_GET['generate_pdf'])) {
                 // Encabezados de la tabla adicional
                 $pdf->SetFont('helvetica', 'B', 10);
                 $pdf->Cell(25, 7, '', 1, 0, 'C');  // Celda vacía
-                $pdf->Cell(50, 7, 'Saldo inicial', 1, 0, 'C');
-                $pdf->Cell(50, 7, 'Cantidad recibida', 1, 0, 'C');
-                $pdf->Cell(50, 7, 'Total', 1, 1, 'C');
+                $pdf->Cell(55, 7, 'Saldo inicial', 1, 0, 'C');
+                $pdf->Cell(55, 7, 'Cantidad recibida', 1, 0, 'C');
+                $pdf->Cell(55, 7, 'Total Pendientes', 1, 1, 'C');
 
                 // Contenido de la tabla adicional
                 $pdf->SetFont('helvetica', '', 10);
-                $pdf->Cell(25, 7, 'Cajas', 1, 0, 'C');
-                $pdf->Cell(50, 7, '', 1, 0, 'C');  // Puedes dejarlo vacío o poner el valor adecuado
-                $pdf->Cell(50, 7, '', 1, 0, 'C');  // Puedes dejarlo vacío o poner el valor adecuado
-                $pdf->Cell(50, 7, '', 1, 1, 'C');  // Puedes dejarlo vacío o poner el valor adecuado
 
+                // Obtener el total de cajas desde la tabla 'cajas'
+                $queryCajas = "SELECT total_cajas FROM cajas WHERE cliente = '$clienteSeleccionado'";
+                $resultCajas = $conn->query($queryCajas);
+
+                // Verificar si se encontró el total de cajas en la tabla 'cajas'
+                if ($resultCajas->num_rows > 0) {
+                    $rowCajas = $resultCajas->fetch_assoc();
+                    $totalCajasCliente = $rowCajas['total_cajas'];
+                } else {
+                    $totalCajasCliente = 0; // Establecer un valor predeterminado si no se encuentra el total de cajas
+                }
+
+                // Mostrar el total de cajas en la segunda celda
+                $pdf->Cell(25, 7, 'Cajas', 1, 0, 'C');
+                $pdf->Cell(55, 7, $totalCajasCliente, 1, 0, 'C');  // Puedes dejar vacía esta celda o poner el valor adecuado
+                $pdf->Cell(55, 7, '', 1, 0, 'C');  // Mostrar el total de cajas en la segunda celda
+                $pdf->Cell(55, 7, '', 1, 1, 'C');  // Puedes dejar vacía esta celda o poner el valor adecuado
+
+                // Obtener el total de tapas desde la tabla 'cajas'
+                $queryTapas = "SELECT total_tapas FROM cajas WHERE cliente = '$clienteSeleccionado'";
+                $resultTapas = $conn->query($queryTapas);
+
+                // Verificar si se encontró el total de tapas en la tabla 'cajas'
+                if ($resultTapas->num_rows > 0) {
+                    $rowTapas = $resultTapas->fetch_assoc();
+                    $totalTapasCliente = $rowTapas['total_tapas'];
+                } else {
+                    $totalTapasCliente = 0; // Establecer un valor predeterminado si no se encuentra el total de tapas
+                }
+
+                // Mostrar el total de tapas en la tercera celda
                 $pdf->Cell(25, 7, 'Tapas', 1, 0, 'C');
-                $pdf->Cell(50, 7, '', 1, 0, 'C');  // Puedes dejarlo vacío o poner el valor adecuado
-                $pdf->Cell(50, 7, '', 1, 0, 'C');  // Puedes dejarlo vacío o poner el valor adecuado
-                $pdf->Cell(50, 7, '', 1, 1, 'C');  // Puedes dejarlo vacío o poner el valor adecuado
+                $pdf->Cell(55, 7, $totalTapasCliente, 1, 0, 'C');  // Puedes dejarlo vacío o poner el valor adecuado
+                $pdf->Cell(55, 7, '', 1, 0, 'C');  // Mostrar el total de tapas en la tercera celda
+                $pdf->Cell(55, 7, '', 1, 1, 'C');  // Puedes dejarlo vacío o poner el valor adecuado
             }
 
-            $pdfFileName = 'inventario_' . $clienteSeleccionado . '_' . $fechaActual . '.pdf';
+            $pdfFileName = 'Nota_' . $clienteSeleccionado . '_' . $fechaActual . '.pdf';
             $pdf->Output($pdfFileName, 'D');
         } else {
             echo 'No hay transacciones para el cliente y fecha actuales.';
@@ -111,7 +138,6 @@ if (isset($_GET['generate_pdf'])) {
     }
 }
 ?>
-
 
 
 <?php include 'menu.php'; ?>
