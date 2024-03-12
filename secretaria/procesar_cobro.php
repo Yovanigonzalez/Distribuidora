@@ -12,6 +12,9 @@ date_default_timezone_set('America/Mexico_City');
 // Obtener datos de la solicitud AJAX
 $jsonData = json_decode($_POST['datos'], true);
 
+// Obtener el método de pago seleccionado
+$metodoPago = isset($_POST['metodoPago']) ? $_POST['metodoPago'] : '';
+
 // Obtener la fecha y hora actual en formato de 12 horas
 $fechaHoraActual = date('Y-m-d h:i:s a');
 
@@ -41,14 +44,15 @@ try {
         $precio = $producto['precio'];
         $cajas = $producto['cajas'];
         $tapas = $producto['tapas']; // Agregar la cantidad de tapas
+        $metodoPago = $producto['metodoPago']; // Agregar el método de pago
         $subtotal = $producto['subtotal'];
         $cliente = empty($producto['cliente']) ? 'CLIENTE VARIOS' : $producto['cliente'];
         $direccion = $producto['direccion'];
         $deuda = 'deuda';
 
         // Insertar en la tabla de ventas
-        $sqlInsertVenta = "INSERT INTO ventas (kilos, piezas, categoria, precio, cajas, tapas, subtotal, cliente, direccion, fecha_hora)
-                          VALUES ('$kilos', '$piezas', '$categoria', '$precio', '$cajas', '$tapas', '$subtotal', '$cliente', '$direccion', '$fechaHoraActual')";
+        $sqlInsertVenta = "INSERT INTO ventas (kilos, piezas, categoria, precio, cajas, tapas, metodo_pago, subtotal, cliente, direccion, fecha_hora)
+                          VALUES ('$kilos', '$piezas', '$categoria', '$precio', '$cajas', '$tapas', '$metodoPago', '$subtotal', '$cliente', '$direccion', '$fechaHoraActual')";
 
         if ($conn->query($sqlInsertVenta) !== TRUE) {
             // Error en la inserción de ventas
@@ -56,8 +60,8 @@ try {
         }
 
         // Insertar en la tabla de deudores
-        $sqlInsertDeudor = "INSERT INTO deudores (kilos, piezas, categoria, precio, cajas, tapas, subtotal, cliente, direccion, fecha_hora, estatus)
-                        VALUES ('$kilos', '$piezas', '$categoria', '$precio', '$cajas', '$tapas', '$subtotal', '$cliente', '$direccion', '$fechaHoraActual', '$deuda')";
+        $sqlInsertDeudor = "INSERT INTO deudores (kilos, piezas, categoria, precio, cajas, tapas, metodo_pago, subtotal, cliente, direccion, fecha_hora, estatus)
+                        VALUES ('$kilos', '$piezas', '$categoria', '$precio', '$cajas', '$tapas', '$metodoPago', '$subtotal', '$cliente', '$direccion', '$fechaHoraActual', '$deuda')";
 
         if ($conn->query($sqlInsertDeudor) !== TRUE) {
             // Error en la inserción de deudores

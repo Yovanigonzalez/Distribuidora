@@ -87,14 +87,14 @@ if (!$resultCategorias || !$resultProductos) {
                                                 <input type="text" id="direccion" class="form-control" name="direccion" placeholder="Dirección" readonly>
                                             </div>
 
-                                            <div class="form-group col-md-4">
+                                            <div class="form-group col-md-2">
                                                 <label for="kilos">Kilos:</label>
-                                                <input type="text" class="form-control" name="kilos" id="kilos" placeholder="Ingrese la cantidad en kilos">
+                                                <input type="text" class="form-control" name="kilos" id="kilos" placeholder="Cantidad en kilos">
                                             </div>
 
-                                            <div class="form-group col-md-4">
+                                            <div class="form-group col-md-2">
                                                 <label for="piezas">Piezas:</label>
-                                                <input type="text" class="form-control" name="piezas" id="piezas" placeholder="Ingrese la cantidad de piezas">
+                                                <input type="text" class="form-control" name="piezas" id="piezas" placeholder="Cantidad de piezas">
                                             </div>
 
                                             <div class="form-group col-md-4">
@@ -118,21 +118,30 @@ if (!$resultCategorias || !$resultProductos) {
                                                 <input type="text" id="categoria" class="form-control" name="categoria" placeholder="Categoría" readonly>
                                             </div>
 
-                                            <div class="form-group col-md-4">
-                                                <label for="precio">$Precio:</label>
+                                            <div class="form-group col-md-2">
+                                                <label for="precio">Precio:</label>
                                                 <input type="text" class="form-control" name="precio" id="precio" placeholder="Ingrese el precio">
                                             </div>
 
-                                            <div class="form-group col-md-4">
+                                            <div class="form-group col-md-2">
                                                 <label for="cajas">Cajas:</label>
-                                                <input type="text" class="form-control" name="cajas" id="cajas" placeholder="Ingrese la cantidad de cajas">
+                                                <input type="text" class="form-control" name="cajas" id="cajas" placeholder="Cantidad de cajas">
+                                            </div>
+
+                                            <div class="form-group col-md-2">
+                                                <label for="tapas">Tapas:</label>
+                                                <input type="text" class="form-control" name="tapas" id="tapas" placeholder="Cantidad de tapas">
                                             </div>
 
                                             <div class="form-group col-md-4">
-                                                <label for="tapas">Tapas:</label>
-                                                <input type="text" class="form-control" name="tapas" id="tapas" placeholder="Ingrese la cantidad de tapas">
+                                                <label for="metodoPago">Método de Pago:</label>
+                                                <select class="form-control" name="metodoPago" id="metodoPago">
+                                                    <option>Selecciona el Método de Pago</option>
+                                                    <option value="contado">Decontado</option>
+                                                    <option value="credito">Crédito</option>
+                                                </select>
                                             </div>
-
+                                            
                                         </div>
                                     </div>
 
@@ -142,7 +151,7 @@ if (!$resultCategorias || !$resultProductos) {
                                 <!-- Tabla para mostrar los elementos agregados -->
                                 <div class="container mt-4">
                                     <table class="table" id="tablaProductos">
-                                        <thead>
+                                    <thead>
                                             <tr>
                                                 <th scope="col">Kilos</th>
                                                 <th scope="col">Piezas</th>
@@ -150,6 +159,7 @@ if (!$resultCategorias || !$resultProductos) {
                                                 <th scope="col">Precio</th>
                                                 <th scope="col">Cajas</th>
                                                 <th scope="col">Tapas</th>
+                                                <th scope="col">Pago</th>
                                                 <th scope="col">Subtotal</th>
                                                 <th scope="col">Cliente</th>
                                                 <th scope="col">Direccion</th>
@@ -158,8 +168,8 @@ if (!$resultCategorias || !$resultProductos) {
                                         <tbody></tbody>
                                         <tfoot>
                                             <tr>
-                                                <th colspan="7" class="text-right"><h2>Total</h2></th>
-                                                <th id="total"><h2>$0.00</h2></th>
+                                                <th colspan="7" class="text-right"><label>Total</label></th>
+                                                <th id="total"><label>$0.00</label></th>
                                                 <th colspan="2"></th>
                                             </tr>
                                         </tfoot>
@@ -182,10 +192,9 @@ if (!$resultCategorias || !$resultProductos) {
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-
-        // Evento de clic para el botón "Cobrar"
+    <script>
+document.addEventListener("DOMContentLoaded", function () {
+    // Evento de clic para el botón "Cobrar"
     document.querySelector(".btn-cobrar").addEventListener("click", function () {
         // Obtener datos de la tabla
         var tablaProductos = document.getElementById("tablaProductos").getElementsByTagName('tbody')[0];
@@ -207,10 +216,11 @@ if (!$resultCategorias || !$resultProductos) {
                 categoria: fila[2].innerText,
                 precio: fila[3].innerText,
                 cajas: fila[4].innerText,
-                tapas: fila[5].innerText, // Añadir la cantidad de tapas
-                subtotal: fila[6].innerText,
-                cliente: fila[7].innerText,
-                direccion: fila[8].innerText // Ajustar el índice para la dirección
+                tapas: fila[5].innerText,
+                metodoPago: fila[6].innerText, // Agregar el método de pago
+                subtotal: fila[7].innerText,
+                cliente: fila[8].innerText,
+                direccion: fila[9].innerText // Ajustar el índice para la dirección
             };
             datos.push(producto);
         }
@@ -237,19 +247,8 @@ if (!$resultCategorias || !$resultProductos) {
                 alert("Error al procesar el cobro. Por favor, inténtelo nuevamente.");
             }
         };
-
-        // ... Otro código JavaScript ...
     });
 
-    // ... Otro código JavaScript ...
-});
-
-</script>
-<!-- ... Otro código HTML ... -->
-
-
-<script>
-document.addEventListener("DOMContentLoaded", function () {
     var agregarBtn = document.getElementById("agregarBtn");
     agregarBtn.addEventListener("click", agregarProducto);
 
@@ -263,6 +262,7 @@ document.addEventListener("DOMContentLoaded", function () {
         var precioInput = document.getElementById("precio");
         var cajasInput = document.getElementById("cajas");
         var tapasInput = document.getElementById("tapas");
+        var metodoPagoInput = document.getElementById("metodoPago"); // Nuevo campo de método de pago
 
         var kilos = parseFloat(kilosInput.value.trim());
         var piezas = parseFloat(piezasInput.value.trim());
@@ -270,6 +270,7 @@ document.addEventListener("DOMContentLoaded", function () {
         var precio = parseFloat(precioInput.value.trim());
         var cajas = parseInt(cajasInput.value.trim());
         var tapas = parseInt(tapasInput.value.trim());
+        var metodoPago = metodoPagoInput.value.trim(); // Obtener el método de pago seleccionado
 
         if (isNaN(kilos) || isNaN(piezas) || isNaN(precio) || isNaN(cajas) || isNaN(tapas)) {
             alert("Por favor, ingrese valores numéricos válidos en los campos correspondientes.");
@@ -294,9 +295,10 @@ document.addEventListener("DOMContentLoaded", function () {
         var celdaPrecio = fila.insertCell(3);
         var celdaCajas = fila.insertCell(4);
         var celdaTapas = fila.insertCell(5);
-        var celdaSubtotal = fila.insertCell(6);
-        var celdaCliente = fila.insertCell(7);
-        var celdaDireccion = fila.insertCell(8);
+        var celdaMetodoPago = fila.insertCell(6); // Nueva celda para el método de pago
+        var celdaSubtotal = fila.insertCell(7);
+        var celdaCliente = fila.insertCell(8);
+        var celdaDireccion = fila.insertCell(9); // Ajustar el índice para la dirección
 
         // Asignar valores a las celdas
         celdaKilos.innerHTML = kilos.toFixed(2);
@@ -305,6 +307,7 @@ document.addEventListener("DOMContentLoaded", function () {
         celdaPrecio.innerHTML = precio.toFixed(2);
         celdaCajas.innerHTML = cajas;
         celdaTapas.innerHTML = tapas;
+        celdaMetodoPago.innerHTML = metodoPago; // Asignar el método de pago
         celdaSubtotal.innerHTML = subtotal.toFixed(2);
         celdaCliente.innerHTML = clienteActual;
         celdaDireccion.innerHTML = direccionActual;
@@ -316,6 +319,7 @@ document.addEventListener("DOMContentLoaded", function () {
         precioInput.value = "";
         cajasInput.value = "";
         tapasInput.value = "";
+        metodoPagoInput.value = "Selecciona el Método de Pago"; // Restaurar la opción predeterminada
 
         // Calcular y actualizar el total
         calcularTotal();
@@ -327,15 +331,16 @@ document.addEventListener("DOMContentLoaded", function () {
         var total = 0;
 
         for (var i = 0; i < filas.length; i++) {
-            var subtotal = parseFloat(filas[i].getElementsByTagName('td')[6].innerHTML);
+            var subtotal = parseFloat(filas[i].getElementsByTagName('td')[7].innerHTML);
             total += subtotal;
         }
 
         document.getElementById("total").innerHTML = '$' + total.toFixed(2);
     }
 });
-
 </script>
+
+
 
 <script>
 var clientesList = document.getElementById("clientesList");
