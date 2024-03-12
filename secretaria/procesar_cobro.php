@@ -33,44 +33,41 @@ try {
         }
     }
 
-    // Insertar los datos en la tabla de ventas
+    // Insertar los datos en la tabla de ventas y deudores
     foreach ($jsonData as $producto) {
         $kilos = $producto['kilos'];
         $piezas = $producto['piezas'];
         $categoria = $producto['categoria'];
         $precio = $producto['precio'];
         $cajas = $producto['cajas'];
+        $tapas = $producto['tapas']; // Agregar la cantidad de tapas
         $subtotal = $producto['subtotal'];
-
-        // Verificar si el campo $cliente está vacío y asignar 'Cliente varios' en ese caso
         $cliente = empty($producto['cliente']) ? 'CLIENTE VARIOS' : $producto['cliente'];
-
         $direccion = $producto['direccion'];
+        $deuda = 'deuda';
 
         // Insertar en la tabla de ventas
-        $sqlInsertVenta = "INSERT INTO ventas (kilos, piezas, categoria, precio, cajas, subtotal, cliente, direccion, fecha_hora)
-                          VALUES ('$kilos', '$piezas', '$categoria', '$precio', '$cajas', '$subtotal', '$cliente', '$direccion', '$fechaHoraActual')";
+        $sqlInsertVenta = "INSERT INTO ventas (kilos, piezas, categoria, precio, cajas, tapas, subtotal, cliente, direccion, fecha_hora)
+                          VALUES ('$kilos', '$piezas', '$categoria', '$precio', '$cajas', '$tapas', '$subtotal', '$cliente', '$direccion', '$fechaHoraActual')";
 
         if ($conn->query($sqlInsertVenta) !== TRUE) {
             // Error en la inserción de ventas
             throw new Exception("Error al insertar en la tabla de ventas: " . $conn->error);
         }
 
-        // Insertar en la nueva tabla de deudores con el estatus 'deudas'
-        // Insertar en la nueva tabla de deudores con el estatus 'deudas'
-        $deuda = 'deuda';
-        $sqlInsertDeudor = "INSERT INTO deudores (kilos, piezas, categoria, precio, cajas, subtotal, cliente, direccion, fecha_hora, estatus)
-                        VALUES ('$kilos', '$piezas', '$categoria', '$precio', '$cajas', '$subtotal', '$cliente', '$direccion', '$fechaHoraActual', '$deuda')";
+        // Insertar en la tabla de deudores
+        $sqlInsertDeudor = "INSERT INTO deudores (kilos, piezas, categoria, precio, cajas, tapas, subtotal, cliente, direccion, fecha_hora, estatus)
+                        VALUES ('$kilos', '$piezas', '$categoria', '$precio', '$cajas', '$tapas', '$subtotal', '$cliente', '$direccion', '$fechaHoraActual', '$deuda')";
 
         if ($conn->query($sqlInsertDeudor) !== TRUE) {
             // Error en la inserción de deudores
             throw new Exception("Error al insertar en la tabla de deudores: " . $conn->error);
         }
 
-        // Sumar las cajas por cliente y actualizar la tabla 'cajas'
-        $sqlUpdateCajas = "INSERT INTO cajas (cliente, total_cajas) 
-                           VALUES ('$cliente', '$cajas')
-                           ON DUPLICATE KEY UPDATE total_cajas = total_cajas + VALUES(total_cajas)";
+        // Sumar las cajas y tapas por cliente y actualizar la tabla 'cajas'
+        $sqlUpdateCajas = "INSERT INTO cajas (cliente, total_cajas, total_tapas) 
+                   VALUES ('$cliente', '$cajas', '$tapas')
+                   ON DUPLICATE KEY UPDATE total_cajas = total_cajas + VALUES(total_cajas), total_tapas = total_tapas + VALUES(total_tapas)";
 
         if ($conn->query($sqlUpdateCajas) !== TRUE) {
             // Error en la actualización de cajas

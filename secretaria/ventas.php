@@ -66,7 +66,7 @@ if (!$resultCategorias || !$resultProductos) {
                                     <div class="container mt-4">
                                         <div class="form-row">
                                             <div class="form-group col-md-4">
-                                                <label for="cliente">Cliente</label>
+                                                <label for="cliente">Cliente:</label>
                                                 <!-- Campo de búsqueda para clientes -->
                                                 <input type="text" id="searchClientes" class="form-control" onkeyup="searchClientes()" placeholder="Buscar clientes...">
                                                 <!-- Lista de clientes (inicialmente oculta) -->
@@ -88,17 +88,17 @@ if (!$resultCategorias || !$resultProductos) {
                                             </div>
 
                                             <div class="form-group col-md-4">
-                                                <label for="kilos">KILOS</label>
+                                                <label for="kilos">Kilos:</label>
                                                 <input type="text" class="form-control" name="kilos" id="kilos" placeholder="Ingrese la cantidad en kilos">
                                             </div>
 
                                             <div class="form-group col-md-4">
-                                                <label for="piezas">PIEZAS</label>
+                                                <label for="piezas">Piezas:</label>
                                                 <input type="text" class="form-control" name="piezas" id="piezas" placeholder="Ingrese la cantidad de piezas">
                                             </div>
 
                                             <div class="form-group col-md-4">
-                                                <label for="producto">Producto</label>
+                                                <label for="producto">Producto:</label>
                                                 <!-- Campo de búsqueda para categorías -->
                                                 <input type="text" id="searchCategorias" class="form-control" onkeyup="searchCategorias()" placeholder="Buscar categorías...">
                                                 <!-- Lista de categorías (inicialmente oculta) -->
@@ -119,14 +119,20 @@ if (!$resultCategorias || !$resultProductos) {
                                             </div>
 
                                             <div class="form-group col-md-4">
-                                                <label for="precio">$PRECIO</label>
+                                                <label for="precio">$Precio:</label>
                                                 <input type="text" class="form-control" name="precio" id="precio" placeholder="Ingrese el precio">
                                             </div>
 
                                             <div class="form-group col-md-4">
-                                                <label for="cajas">CAJAS</label>
+                                                <label for="cajas">Cajas:</label>
                                                 <input type="text" class="form-control" name="cajas" id="cajas" placeholder="Ingrese la cantidad de cajas">
                                             </div>
+
+                                            <div class="form-group col-md-4">
+                                                <label for="tapas">Tapas:</label>
+                                                <input type="text" class="form-control" name="tapas" id="tapas" placeholder="Ingrese la cantidad de tapas">
+                                            </div>
+
                                         </div>
                                     </div>
 
@@ -138,20 +144,21 @@ if (!$resultCategorias || !$resultProductos) {
                                     <table class="table" id="tablaProductos">
                                         <thead>
                                             <tr>
-                                                <th scope="col">KILOS</th>
-                                                <th scope="col">PIEZAS</th>
-                                                <th scope="col">CATEGORÍA</th>
-                                                <th scope="col">PRECIO</th>
-                                                <th scope="col">CAJAS</th>
-                                                <th scope="col">SUBTOTAL</th>
-                                                <th scope="col">CLIENTE</th>
-                                                <th scope="col">DIRECCIÓN</th>
+                                                <th scope="col">Kilos</th>
+                                                <th scope="col">Piezas</th>
+                                                <th scope="col">Descripcion</th>
+                                                <th scope="col">Precio</th>
+                                                <th scope="col">Cajas</th>
+                                                <th scope="col">Tapas</th>
+                                                <th scope="col">Subtotal</th>
+                                                <th scope="col">Cliente</th>
+                                                <th scope="col">Direccion</th>
                                             </tr>
                                         </thead>
                                         <tbody></tbody>
                                         <tfoot>
                                             <tr>
-                                                <th colspan="6" class="text-right"><h2>Total</h2></th>
+                                                <th colspan="7" class="text-right"><h2>Total</h2></th>
                                                 <th id="total"><h2>$0.00</h2></th>
                                                 <th colspan="2"></th>
                                             </tr>
@@ -174,15 +181,11 @@ if (!$resultCategorias || !$resultProductos) {
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
-    <!-- ... Otro código HTML ... -->
-
-<!-- ... Otro código HTML ... -->
 
 <script>
-document.addEventListener("DOMContentLoaded", function () {
-    // ... Otro código JavaScript ...
+    document.addEventListener("DOMContentLoaded", function () {
 
-    // Evento de clic para el botón "Cobrar"
+        // Evento de clic para el botón "Cobrar"
     document.querySelector(".btn-cobrar").addEventListener("click", function () {
         // Obtener datos de la tabla
         var tablaProductos = document.getElementById("tablaProductos").getElementsByTagName('tbody')[0];
@@ -204,9 +207,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 categoria: fila[2].innerText,
                 precio: fila[3].innerText,
                 cajas: fila[4].innerText,
-                subtotal: fila[5].innerText,
-                cliente: fila[6].innerText,
-                direccion: fila[7].innerText
+                tapas: fila[5].innerText, // Añadir la cantidad de tapas
+                subtotal: fila[6].innerText,
+                cliente: fila[7].innerText,
+                direccion: fila[8].innerText // Ajustar el índice para la dirección
             };
             datos.push(producto);
         }
@@ -241,92 +245,97 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 </script>
-
 <!-- ... Otro código HTML ... -->
 
 
-    <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        var agregarBtn = document.getElementById("agregarBtn");
-        agregarBtn.addEventListener("click", agregarProducto);
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    var agregarBtn = document.getElementById("agregarBtn");
+    agregarBtn.addEventListener("click", agregarProducto);
 
-        var clienteActual = "";
-        var direccionActual = "";
+    var clienteActual = "";
+    var direccionActual = "";
 
-        function agregarProducto() {
-            var kilosInput = document.getElementById("kilos");
-            var piezasInput = document.getElementById("piezas");
-            var categoriaInput = document.getElementById("categoria");
-            var precioInput = document.getElementById("precio");
-            var cajasInput = document.getElementById("cajas");
+    function agregarProducto() {
+        var kilosInput = document.getElementById("kilos");
+        var piezasInput = document.getElementById("piezas");
+        var categoriaInput = document.getElementById("categoria");
+        var precioInput = document.getElementById("precio");
+        var cajasInput = document.getElementById("cajas");
+        var tapasInput = document.getElementById("tapas");
 
-            var kilos = parseFloat(kilosInput.value.trim());
-            var piezas = parseFloat(piezasInput.value.trim());
-            var categoria = categoriaInput.value.trim();
-            var precio = parseFloat(precioInput.value.trim());
-            var cajas = parseInt(cajasInput.value.trim());
+        var kilos = parseFloat(kilosInput.value.trim());
+        var piezas = parseFloat(piezasInput.value.trim());
+        var categoria = categoriaInput.value.trim();
+        var precio = parseFloat(precioInput.value.trim());
+        var cajas = parseInt(cajasInput.value.trim());
+        var tapas = parseInt(tapasInput.value.trim());
 
-            if (isNaN(kilos) || isNaN(piezas) || isNaN(precio) || isNaN(cajas)) {
-                alert("Por favor, ingrese valores numéricos válidos en los campos correspondientes.");
-                return;
-            }
-
-            // Calcular el subtotal multiplicando kilos por precio
-            var subtotal = kilos * precio;
-
-            // Obtener el nombre del cliente y la dirección
-            clienteActual = document.getElementById("cliente").value;
-            direccionActual = document.getElementById("direccion").value;
-
-            // Crear una nueva fila en la tabla
-            var tablaProductos = document.getElementById("tablaProductos").getElementsByTagName('tbody')[0];
-            var fila = tablaProductos.insertRow();
-
-            // Insertar celdas con los valores proporcionados
-            var celdaKilos = fila.insertCell(0);
-            var celdaPiezas = fila.insertCell(1);
-            var celdaCategoria = fila.insertCell(2);
-            var celdaPrecio = fila.insertCell(3);
-            var celdaCajas = fila.insertCell(4);
-            var celdaSubtotal = fila.insertCell(5);
-            var celdaCliente = fila.insertCell(6); // Nueva celda para el cliente
-            var celdaDireccion = fila.insertCell(7); // Nueva celda para la dirección
-
-            // Asignar valores a las celdas
-            celdaKilos.innerHTML = kilos.toFixed(2);
-            celdaPiezas.innerHTML = piezas;
-            celdaCategoria.innerHTML = categoria;
-            celdaPrecio.innerHTML = precio.toFixed(2);
-            celdaCajas.innerHTML = cajas;
-            celdaSubtotal.innerHTML = subtotal.toFixed(2);
-            celdaCliente.innerHTML = clienteActual; // Mostrar el cliente
-            celdaDireccion.innerHTML = direccionActual; // Mostrar la dirección
-
-            // Limpiar los campos de entrada
-            kilosInput.value = "";
-            piezasInput.value = "";
-            categoriaInput.value = "";
-            precioInput.value = "";
-            cajasInput.value = "";
-
-            // Calcular y actualizar el total
-            calcularTotal();
+        if (isNaN(kilos) || isNaN(piezas) || isNaN(precio) || isNaN(cajas) || isNaN(tapas)) {
+            alert("Por favor, ingrese valores numéricos válidos en los campos correspondientes.");
+            return;
         }
 
-        function calcularTotal() {
-            var tablaProductos = document.getElementById("tablaProductos");
-            var filas = tablaProductos.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
-            var total = 0;
+        // Calcular el subtotal multiplicando kilos y precio
+        var subtotal = kilos * precio;
 
-            for (var i = 0; i < filas.length; i++) {
-                var subtotal = parseFloat(filas[i].getElementsByTagName('td')[5].innerHTML);
-                total += subtotal;
-            }
+        // Obtener el nombre del cliente y la dirección
+        clienteActual = document.getElementById("cliente").value;
+        direccionActual = document.getElementById("direccion").value;
 
-            document.getElementById("total").innerHTML = '$' + total.toFixed(2);
+        // Crear una nueva fila en la tabla
+        var tablaProductos = document.getElementById("tablaProductos").getElementsByTagName('tbody')[0];
+        var fila = tablaProductos.insertRow();
+
+        // Insertar celdas con los valores proporcionados
+        var celdaKilos = fila.insertCell(0);
+        var celdaPiezas = fila.insertCell(1);
+        var celdaCategoria = fila.insertCell(2);
+        var celdaPrecio = fila.insertCell(3);
+        var celdaCajas = fila.insertCell(4);
+        var celdaTapas = fila.insertCell(5);
+        var celdaSubtotal = fila.insertCell(6);
+        var celdaCliente = fila.insertCell(7);
+        var celdaDireccion = fila.insertCell(8);
+
+        // Asignar valores a las celdas
+        celdaKilos.innerHTML = kilos.toFixed(2);
+        celdaPiezas.innerHTML = piezas;
+        celdaCategoria.innerHTML = categoria;
+        celdaPrecio.innerHTML = precio.toFixed(2);
+        celdaCajas.innerHTML = cajas;
+        celdaTapas.innerHTML = tapas;
+        celdaSubtotal.innerHTML = subtotal.toFixed(2);
+        celdaCliente.innerHTML = clienteActual;
+        celdaDireccion.innerHTML = direccionActual;
+
+        // Limpiar los campos de entrada
+        kilosInput.value = "";
+        piezasInput.value = "";
+        categoriaInput.value = "";
+        precioInput.value = "";
+        cajasInput.value = "";
+        tapasInput.value = "";
+
+        // Calcular y actualizar el total
+        calcularTotal();
+    }
+
+    function calcularTotal() {
+        var tablaProductos = document.getElementById("tablaProductos");
+        var filas = tablaProductos.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+        var total = 0;
+
+        for (var i = 0; i < filas.length; i++) {
+            var subtotal = parseFloat(filas[i].getElementsByTagName('td')[6].innerHTML);
+            total += subtotal;
         }
-    });
-    </script>
+
+        document.getElementById("total").innerHTML = '$' + total.toFixed(2);
+    }
+});
+
+</script>
 
 <script>
 var clientesList = document.getElementById("clientesList");
