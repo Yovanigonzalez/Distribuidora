@@ -208,6 +208,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // Crear un objeto con los datos para enviar
         var datos = [];
+        var total = 0; // Variable para almacenar el total
         for (var i = 0; i < filas.length; i++) {
             var fila = filas[i].getElementsByTagName('td');
             var producto = {
@@ -223,7 +224,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 direccion: fila[9].innerText // Ajustar el índice para la dirección
             };
             datos.push(producto);
+            total += parseFloat(fila[7].innerText); // Sumar el subtotal al total
         }
+
+        // Añadir el total al objeto de datos
+        datos.total = total;
 
         // Realizar una solicitud AJAX para llamar a procesar_cobro.php
         var xhr = new XMLHttpRequest();

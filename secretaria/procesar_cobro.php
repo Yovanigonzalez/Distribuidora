@@ -22,6 +22,29 @@ $fechaHoraActual = date('Y-m-d h:i:s a');
 $conn->begin_transaction();
 
 try {
+    // Consultar el último folio registrado para la misma fecha y hora
+    $sqlGetLastFolio = "SELECT folio FROM ventas WHERE fecha_hora = '$fechaHoraActual' ORDER BY folio DESC LIMIT 1";
+    $result = $conn->query($sqlGetLastFolio);
+
+    if ($result->num_rows > 0) {
+        // Hay registros para la misma fecha y hora, obtener el último folio
+        $row = $result->fetch_assoc();
+        $folio = $row['folio'];
+    } else {
+        // No hay registros para la misma fecha y hora, asignar un nuevo folio
+        // Consultar el último folio registrado en general
+        $sqlGetLastFolioOverall = "SELECT MAX(folio) AS max_folio FROM ventas";
+        $resultOverall = $conn->query($sqlGetLastFolioOverall);
+        
+        if ($resultOverall->num_rows > 0) {
+            $rowOverall = $resultOverall->fetch_assoc();
+            $folio = $rowOverall['max_folio'] + 1;
+        } else {
+            // No hay registros en absoluto, establecer el folio inicial
+            $folio = 1;
+        }
+    }
+
     // Recorrer los productos y actualizar el stock en la base de datos
     foreach ($jsonData as $producto) {
         $categoria = $producto['categoria'];
@@ -36,7 +59,11 @@ try {
         }
     }
 
-    // Insertar los datos en la tabla de ventas y deudores
+    // Variables para total de la venta y cliente
+    $totalVenta = 0;
+    $cliente = '';
+
+    // Insertar los datos en la tabla de ventas, deudores y remiciones
     foreach ($jsonData as $producto) {
         $kilos = $producto['kilos'];
         $piezas = $producto['piezas'];
@@ -49,34 +76,63 @@ try {
         $cliente = empty($producto['cliente']) ? 'CLIENTE VARIOS' : $producto['cliente'];
         $direccion = $producto['direccion'];
         $deuda = 'deuda';
+        $estatus = 'estatus';
 
-        // Insertar en la tabla de ventas
-        $sqlInsertVenta = "INSERT INTO ventas (kilos, piezas, categoria, precio, cajas, tapas, metodo_pago, subtotal, cliente, direccion, fecha_hora)
-                          VALUES ('$kilos', '$piezas', '$categoria', '$precio', '$cajas', '$tapas', '$metodoPago', '$subtotal', '$cliente', '$direccion', '$fechaHoraActual')";
+        $totalVenta += $subtotal; // Sumar al total de la venta
+
+        // Insertar en la tabla de ventas (incluye el campo folio)
+        $sqlInsertVenta = "INSERT INTO ventas (folio, kilos, piezas, categoria, precio, cajas, tapas, metodo_pago, subtotal, cliente, direccion, fecha_hora)
+                   VALUES ('$folio', '$kilos', '$piezas', '$categoria', '$precio', '$cajas', '$tapas', '$metodoPago', '$subtotal', '$cliente', '$direccion', '$fechaHoraActual')";
 
         if ($conn->query($sqlInsertVenta) !== TRUE) {
             // Error en la inserción de ventas
             throw new Exception("Error al insertar en la tabla de ventas: " . $conn->error);
         }
 
+        // Incrementar el folio solo si la fecha y hora son diferentes
+        $sqlIncrementFolio = "UPDATE ventas SET folio = folio + 1 WHERE fecha_hora <> '$fechaHoraActual'";
+        $conn->query($sqlIncrementFolio);
+
         // Insertar en la tabla de deudores
-        $sqlInsertDeudor = "INSERT INTO deudores (kilos, piezas, categoria, precio, cajas, tapas, metodo_pago, subtotal, cliente, direccion, fecha_hora, estatus)
-                        VALUES ('$kilos', '$piezas', '$categoria', '$precio', '$cajas', '$tapas', '$metodoPago', '$subtotal', '$cliente', '$direccion', '$fechaHoraActual', '$deuda')";
+        $sqlInsertDeudor = "INSERT INTO deudores (folio_venta, kilos, piezas, categoria, precio, cajas, tapas, metodo_pago, subtotal, cliente, direccion, fecha_hora, estatus)
+        VALUES ('$folio', '$kilos', '$piezas', '$categoria', '$precio', '$cajas', '$tapas', '$metodoPago', '$subtotal', '$cliente', '$direccion', '$fechaHoraActual', '$estatus')";
 
         if ($conn->query($sqlInsertDeudor) !== TRUE) {
             // Error en la inserción de deudores
             throw new Exception("Error al insertar en la tabla de deudores: " . $conn->error);
         }
 
+        // Insertar en la tabla de remiciones
+        $sqlInsertRemicion = "INSERT INTO remiciones (folio_venta, kilos, piezas, categoria, precio, cajas, tapas, metodo_pago, subtotal, cliente, direccion, fecha_hora, estatus)
+        VALUES ('$folio', '$kilos', '$piezas', '$categoria', '$precio', '$cajas', '$tapas', '$metodoPago', '$subtotal', '$cliente', '$direccion', '$fechaHoraActual', '$estatus')";
+
+        if ($conn->query($sqlInsertRemicion) !== TRUE) {
+            // Error en la inserción de remiciones
+            throw new Exception("Error al insertar en la tabla de remiciones: " . $conn->error);
+        }
+
         // Sumar las cajas y tapas por cliente y actualizar la tabla 'cajas'
-        $sqlUpdateCajas = "INSERT INTO cajas (cliente, total_cajas, total_tapas) 
-                   VALUES ('$cliente', '$cajas', '$tapas')
-                   ON DUPLICATE KEY UPDATE total_cajas = total_cajas + VALUES(total_cajas), total_tapas = total_tapas + VALUES(total_tapas)";
+        $sqlUpdateCajas = "INSERT INTO cajas (cliente, direccion, total_cajas, total_tapas) 
+        VALUES ('$cliente', '$direccion', '$cajas', '$tapas')
+        ON DUPLICATE KEY UPDATE 
+            total_cajas = total_cajas + VALUES(total_cajas), 
+            total_tapas = total_tapas + VALUES(total_tapas);
+        ";
 
         if ($conn->query($sqlUpdateCajas) !== TRUE) {
             // Error en la actualización de cajas
             throw new Exception("Error al actualizar la tabla de cajas: " . $conn->error);
         }
+    }
+
+    // Insertar los datos
+    // Insertar los datos en la tabla cliente_deudas
+    $sqlInsertClienteDeuda = "INSERT INTO cliente_deudas (cliente, direccion, total_deuda)
+                            VALUES ('$cliente', '$direccion', '$totalVenta')";
+
+    if ($conn->query($sqlInsertClienteDeuda) !== TRUE) {
+        // Error en la inserción de cliente_deudas
+        throw new Exception("Error al insertar en la tabla cliente_deudas: " . $conn->error);
     }
 
     // Confirmar la transacción si todo fue exitoso

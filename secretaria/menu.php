@@ -25,7 +25,7 @@ include '../config/conexion.php';
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/3.1.0/css/adminlte.min.css">
   <!-- Icono de la página -->
-  <link rel="icon" href="../log/INICIAL.png" type="image/jpeg">
+  <link rel="icon" href="../log/logo2.jpg" type="image/jpeg">
 
   <!-- Enlaces a los archivos JS -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -116,7 +116,7 @@ if (isset($_SESSION['nombre_usuario'])) {
     <span class="brand-text font-weight-light">Panel de caja</span>
     <div class="center-container">
     <div class="rounded-circle-container">
-        <img src="../log/INICIAL.png" class="img-fluid" alt="Login Image">
+        <img src="../log/logo2.jpg" class="img-fluid" alt="Login Image">
     </div>
 </div>
   </a>
@@ -156,6 +156,13 @@ if (isset($_SESSION['nombre_usuario'])) {
     <a href="nota.php" class="nav-link">
         <i class="nav-icon fas fa-file-alt"></i> <!-- Cambiado a un icono relacionado con notas o documentos -->
         <p>Notas</p>
+    </a>
+</li>
+
+<li class="nav-item">
+    <a href="localizador.php" class="nav-link">
+        <i class="nav-icon fas fa-file-alt"></i> <!-- Cambiado a un icono relacionado con notas o documentos -->
+        <p>Localizar Notas</p>
     </a>
 </li>
 

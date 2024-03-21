@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../css/exito.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <title>Distribuidora | Cajas</title>
+    <title>Distribuidora | Pedidos</title>
 </head>
 <body class="hold-transition sidebar-mini">
     <div class="wrapper">
@@ -20,7 +20,7 @@
                         <div class="col-md-12">
                             <div class="card">
                                 <div class="card-header">
-                                    <h3 class="card-title">Cajas</h3>
+                                    <h3 class="card-title">Pedidos</h3>
                                 </div>
                                 <div class="card-body">
                                     <form action="" method="post">
@@ -37,38 +37,35 @@
 
                                         $search_cliente = $_POST['search_cliente'];
 
-// Obtener la información del cliente
-$queryClienteInfo = "SELECT id, cliente, direccion, total_cajas, total_tapas FROM cajas WHERE cliente LIKE '%$search_cliente%'";
-$resultClienteInfo = $conn->query($queryClienteInfo);
+                                        // Obtener la información del cliente
+                                        $queryClienteInfo = "SELECT id, cliente, total_cajas, total_tapas FROM cajas WHERE cliente LIKE '%$search_cliente%'";
+                                        $resultClienteInfo = $conn->query($queryClienteInfo);
 
-// Mostrar la información del cliente
-if ($resultClienteInfo->num_rows > 0) {
-    echo "<div class='row'>
-            <div class='col-md-8'>";
-    while ($rowClienteInfo = $resultClienteInfo->fetch_assoc()) {
-        $cliente_nombre = $rowClienteInfo['cliente']; // Asignar el nombre del cliente
-        $direccion_cliente = $rowClienteInfo['direccion']; // Asignar la dirección del cliente
-        echo "<h4>Cliente: " . $cliente_nombre . "</h4>";
-        echo "<p>Dirección: " . $direccion_cliente . "</p>";
-        echo "<p>Cajas: " . $rowClienteInfo['total_cajas'] . "</p>";
-        echo "<p>Tapas: " . $rowClienteInfo['total_tapas'] . "</p>";
+                                        // Mostrar la información del cliente
+                                        if ($resultClienteInfo->num_rows > 0) {
+                                            echo "<div class='row'>
+                                                    <div class='col-md-8'>";
+                                            while ($rowClienteInfo = $resultClienteInfo->fetch_assoc()) {
+                                                $cliente_nombre = $rowClienteInfo['cliente']; // Asignar el nombre del cliente
+                                                echo "<h4>Cliente: " . $cliente_nombre . "</h4>";
+                                                echo "<p>Cajas: " . $rowClienteInfo['total_cajas'] . "</p>";
+                                                echo "<p>Tapas: " . $rowClienteInfo['total_tapas'] . "</p>";
 
-        // Agregar campos de entrada para la resta
-        echo "<form action='' method='post'>
-                <label for='restar_cajas'>Restar cajas:</label>
-                <input type='number' name='restar_cajas' class='form-control' required>
-                <label for='restar_tapas'>Restar tapas:</label>
-                <input type='number' name='restar_tapas' class='form-control' required>
-                <br>
-                <input type='hidden' name='cliente_id' value='".$rowClienteInfo['id']."'>
-                <button type='submit' class='btn btn-danger' name='restar_submit'>Restar</button>
-            </form>";
-    }
-    echo "</div></div>";
-} else {
-    echo "<p>No se encontró información para el cliente '$search_cliente'.</p>";
-}
-
+                                                // Agregar campos de entrada para la resta
+                                                echo "<form action='' method='post'>
+                                                        <label for='restar_cajas'>Restar cajas:</label>
+                                                        <input type='number' name='restar_cajas' class='form-control' required>
+                                                        <label for='restar_tapas'>Restar tapas:</label>
+                                                        <input type='number' name='restar_tapas' class='form-control' required>
+                                                        <br>
+                                                        <input type='hidden' name='cliente_id' value='".$rowClienteInfo['id']."'>
+                                                        <button type='submit' class='btn btn-danger' name='restar_submit'>Restar</button>
+                                                    </form>";
+                                            }
+                                            echo "</div></div>";
+                                        } else {
+                                            echo "<p>No se encontró información para el cliente '$search_cliente'.</p>";
+                                        }
 
                                         // Cerrar la conexión a la base de datos
                                         $conn->close();
@@ -106,7 +103,7 @@ if ($resultClienteInfo->num_rows > 0) {
 
                                         // Insertar detalles de la resta en una nueva tabla de la base de datos
                                         $fecha_actual = date('Y-m-d H:i:s');
-                                        $insertDetailsQuery = "INSERT INTO detalles_resta (cliente_nombre, direccion, cliente_id, cajas_restantes, tapas_restantes, prev_total_cajas, prev_total_tapas, post_total_cajas, post_total_tapas, fecha_resta) VALUES ('$cliente_nombre', '$direccion_cliente', $cliente_id, $restar_cajas, $restar_tapas, {$rowPrevInfo['total_cajas']}, {$rowPrevInfo['total_tapas']}, {$rowPostInfo['total_cajas']}, {$rowPostInfo['total_tapas']}, '$fecha_actual')";
+                                        $insertDetailsQuery = "INSERT INTO detalles_resta (cliente_nombre, cliente_id, fecha_resta, cajas_restantes, tapas_restantes, prev_total_cajas, prev_total_tapas, post_total_cajas, post_total_tapas) VALUES ('$cliente_nombre', $cliente_id, '$fecha_actual', $restar_cajas, $restar_tapas, {$rowPrevInfo['total_cajas']}, {$rowPrevInfo['total_tapas']}, {$rowPostInfo['total_cajas']}, {$rowPostInfo['total_tapas']})";
                                         $conn->query($insertDetailsQuery);
 
                                         // Mostrar los nuevos resultados
