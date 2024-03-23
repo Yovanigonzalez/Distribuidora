@@ -7,5 +7,6 @@
 </head>
 <body>
     <h2>Ejemplo de subir todo</h2>
+    <img src="" alt="">
 </body>
 </html>
